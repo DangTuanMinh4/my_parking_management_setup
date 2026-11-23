@@ -11,6 +11,7 @@ Hệ thống Quản lý Bãi đỗ xe Thông minh Smart Mobility — Monorepo qu
 > - Hai thư mục `parking_management_backend/` và `parking_management_frontend/` là **hai Git sub-repositories độc lập** do các nhóm phát triển quản lý riêng biệt và đã được thiết lập bỏ qua trong `.gitignore`.
 > - Repo này đóng vai trò là **Workspace Setup & Orchestration Hub**: chịu trách nhiệm điều phối môi trường chạy (Docker, Taskfile, local scripts), quản lý tài liệu kiến trúc, bộ quy tắc an toàn mã nguồn (**AI Clean Code & Git Safety Guardrails**) cùng hệ thống Telemetry giám sát.
 > - Khi clone repository này về, bạn cần clone riêng mã nguồn Backend và Frontend vào 2 thư mục tương ứng theo hướng dẫn tại [02-run-backend-and-frontend.md](02-run-backend-and-frontend.md).
+> - **Tìm kiếm mã nguồn trên VS Code**: Hệ thống đã cấu hình sẵn `.ignore` và `.vscode/settings.json` để cho phép tìm kiếm (`Ctrl + Shift + F`) trực tiếp trong 2 thư mục `parking_management_backend/` và `parking_management_frontend/` mà không ảnh hưởng tới trạng thái bỏ qua trong `.gitignore` hay các thư mục tạm khác.
 
 ---
 
