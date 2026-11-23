@@ -1,0 +1,78 @@
+{
+  "git-safety-guard": {
+    "PreToolUse": [
+      {
+        "matcher": "run_command",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -ExecutionPolicy Bypass -Command \"$f = @('scripts/git-guard-hook.ps1', '.agents/scripts/git-guard-hook.ps1', 'E:/code/parking_management/.agents/scripts/git-guard-hook.ps1') | Where-Object { Test-Path $_ } | Select-Object -First 1; if ($f) { & $f } else { Write-Output '{\\\"decision\\\": \\\"force_ask\\\", \\\"reason\\\": \\\"[CẢNH BÁO BẢO MẬT] Script git-guard-hook.ps1 không tìm thấy! Bạn có muốn duyệt thủ công lệnh này không?\\\"}' }\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  },
+  "script-write-guard": {
+    "PreToolUse": [
+      {
+        "matcher": "run_command",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -ExecutionPolicy Bypass -Command \"$f = @('scripts/script-write-guard-hook.ps1', '.agents/scripts/script-write-guard-hook.ps1', 'E:/code/parking_management/.agents/scripts/script-write-guard-hook.ps1') | Where-Object { Test-Path $_ } | Select-Object -First 1; if ($f) { & $f } else { Write-Output '{\\\"decision\\\": \\\"force_ask\\\", \\\"reason\\\": \\\"[CẢNH BÁO BẢO MẬT] Script script-write-guard-hook.ps1 không tìm thấy!\\\"}' }\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  },
+  "playwright-execution-guard": {
+    "PreToolUse": [
+      {
+        "matcher": "run_command",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -ExecutionPolicy Bypass -Command \"$f = @('scripts/playwright-guard-hook.ps1', '.agents/scripts/playwright-guard-hook.ps1', 'E:/code/parking_management/.agents/scripts/playwright-guard-hook.ps1') | Where-Object { Test-Path $_ } | Select-Object -First 1; if ($f) { & $f } else { Write-Output '{\\\"decision\\\": \\\"force_ask\\\", \\\"reason\\\": \\\"[CẢNH BÁO BẢO MẬT] Script playwright-guard-hook.ps1 không tìm thấy! Bạn có muốn duyệt thủ công lệnh này không?\\\"}' }\"",
+            "timeout": 10
+          }
+        ]
+      },
+      {
+        "matcher": "edit_file",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -ExecutionPolicy Bypass -Command \"$f = @('scripts/playwright-guard-hook.ps1', '.agents/scripts/playwright-guard-hook.ps1', 'E:/code/parking_management/.agents/scripts/playwright-guard-hook.ps1') | Where-Object { Test-Path $_ } | Select-Object -First 1; if ($f) { & $f } else { Write-Output '{\\\"decision\\\": \\\"force_ask\\\", \\\"reason\\\": \\\"[CẢNH BÁO BẢO MẬT] Script playwright-guard-hook.ps1 không tìm thấy! Bạn có muốn duyệt thủ công thao tác sửa file này không?\\\"}' }\"",
+            "timeout": 10
+          }
+        ]
+      },
+      {
+        "matcher": "write_file",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -ExecutionPolicy Bypass -Command \"$f = @('scripts/playwright-guard-hook.ps1', '.agents/scripts/playwright-guard-hook.ps1', 'E:/code/parking_management/.agents/scripts/playwright-guard-hook.ps1') | Where-Object { Test-Path $_ } | Select-Object -First 1; if ($f) { & $f } else { Write-Output '{\\\"decision\\\": \\\"force_ask\\\", \\\"reason\\\": \\\"[CẢNH BÁO BẢO MẬT] Script playwright-guard-hook.ps1 không tìm thấy! Bạn có muốn duyệt thủ công thao tác tạo/ghi file này không?\\\"}' }\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  },
+  "workflow-permission-guard": {
+    "PreToolUse": [
+      {
+        "matcher": "run_workflow",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -ExecutionPolicy Bypass -Command \"$f = @('scripts/workflow-guard.ps1', '.agents/scripts/workflow-guard.ps1', 'E:/code/parking_management/.agents/scripts/workflow-guard.ps1') | Where-Object { Test-Path $_ } | Select-Object -First 1; if ($f) { & $f } else { Write-Output '{\\\"decision\\\": \\\"force_ask\\\", \\\"reason\\\": \\\"[CẢNH BÁO BẢO MẬT] Yêu cầu cấp quyền người dùng để thực thi run_workflow.\\\"}' }\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}

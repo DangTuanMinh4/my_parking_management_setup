@@ -1,0 +1,54 @@
+{
+  "$schema": "https://github.com/dyoshikawa/rulesync/releases/latest/download/permissions-schema.json",
+  "permission": {
+    "bash": {
+      "git status": "allow",
+      "git diff": "allow",
+      "npm *": "allow",
+      "graphify *": "allow",
+      "python -c *os.remove*": "deny",
+      "python -c *os.unlink*": "deny",
+      "python -c *open*": "deny",
+      "node -e *unlink*": "deny",
+      "node -e *writeFile*": "deny",
+      "rm -rf *": "deny",
+      "git reset --hard *": "deny",
+      "git reset --hard": "deny",
+      "git clean -f *": "deny",
+      "git clean -f": "deny",
+      "git checkout . *": "deny",
+      "git checkout .": "deny",
+      "git restore . *": "deny",
+      "git restore .": "deny",
+      "git branch -D *": "deny",
+      "git reflog expire *": "deny",
+      "git prune *": "deny",
+      "git prune": "deny",
+      "git gc --prune *": "deny",
+      "git gc --prune": "deny"
+    },
+    "edit": {
+      "parking_management_frontend/**": "allow",
+      "parking_management_backend/**": "deny"
+    },
+    "read": {
+      ".env": "deny",
+      ".env.local": "deny",
+      ".env.production": "deny",
+      ".env.development": "deny",
+      "parking_management_frontend/.env": "deny",
+      "parking_management_frontend/.env.local": "deny",
+      "parking_management_frontend/.env.production": "deny",
+      "parking_management_frontend/.env.development": "deny",
+      "parking_management_backend/.env": "deny",
+      "parking_management_backend/.env.local": "deny",
+      "parking_management_backend/.env.production": "deny",
+      "parking_management_backend/.env.development": "deny"
+    }
+  },
+  "codexcli": {
+    "approval_policy": "on-request",
+    "approvals_reviewer": "auto_review",
+    "base_permission_profile": ":workspace"
+  }
+}

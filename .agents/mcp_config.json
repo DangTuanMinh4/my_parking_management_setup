@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "graphify": {
+      "command": "python",
+      "args": [
+        "-m",
+        "graphify.serve",
+        "--graph",
+        "E:/code/parking_management/graphify-out/graph.json"
+      ],
+      "env": {}
+    }
+  }
+}

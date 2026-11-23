@@ -1,0 +1,140 @@
+version: '3'
+
+vars:
+  BACKEND_DIR: parking_management_backend
+  FRONTEND_DIR: parking_management_frontend
+  COMPOSE_FILE: docker-compose.yml
+
+tasks:
+  # Database
+  db:up:
+    desc: Start PostgreSQL database
+    cmds:
+      - cd {{.BACKEND_DIR}} && docker compose up -d db
+      - cd {{.BACKEND_DIR}} && docker compose ps db
+
+  db:down:
+    desc: Stop PostgreSQL database
+    cmds:
+      - cd {{.BACKEND_DIR}} && docker compose stop db
+
+  db:logs:
+    desc: View database logs
+    cmds:
+      - cd {{.BACKEND_DIR}} && docker compose logs -f db
+
+  # Backend
+  backend:up:
+    desc: Start backend (requires db:up first)
+    cmds:
+      - cd {{.BACKEND_DIR}} && docker compose up -d web
+      - cd {{.BACKEND_DIR}} && docker compose ps web
+
+  backend:down:
+    desc: Stop backend
+    cmds:
+      - cd {{.BACKEND_DIR}} && docker compose stop web
+
+  backend:logs:
+    desc: View backend logs
+    cmds:
+      - cd {{.BACKEND_DIR}} && docker compose logs -f web
+
+  backend:seed:
+    desc: Load sample seed data into the backend database
+    cmds:
+      - docker compose -f {{.BACKEND_DIR}}/docker-compose.yml run --rm web python manage.py load_sample_data
+
+  backend:health:
+    desc: Check backend health
+    cmds:
+      - curl.exe http://127.0.0.1:8000/api/health/
+
+  backend:dev:
+    desc: Run Django directly with virtualenv (requires db:up)
+    cmds:
+      - cd {{.BACKEND_DIR}} && .venv\Scripts\python.exe manage.py runserver 127.0.0.1:8000
+
+  # Frontend
+  frontend:install:
+    desc: Install frontend dependencies
+    cmds:
+      - cd {{.FRONTEND_DIR}} && npm install
+
+  frontend:dev:
+    desc: Start frontend dev server
+    cmds:
+      - cd {{.FRONTEND_DIR}} && npm run dev -- --host 127.0.0.1
+
+  frontend:build:
+    desc: Build frontend for production
+    cmds:
+      - cd {{.FRONTEND_DIR}} && npm run build
+
+  frontend:preview:
+    desc: Preview production build
+    cmds:
+      - cd {{.FRONTEND_DIR}} && npm run preview
+
+  # Full stack
+  up:
+    desc: Start full stack (database + backend + frontend)
+    deps: [db:up, backend:up]
+    cmds:
+      - echo "Database and backend started. Run 'task frontend:dev' in another terminal for frontend."
+
+  down:
+    desc: Stop full stack
+    cmds:
+      - cd {{.BACKEND_DIR}} && docker compose stop web db
+      - echo "Stopped backend and database. Stop frontend with Ctrl+C in its terminal."
+
+  status:
+    desc: Show status of all services
+    cmds:
+      - cd {{.BACKEND_DIR}} && docker compose ps
+      - echo "---"
+      - curl.exe -s http://127.0.0.1:8000/api/health/ || echo "Backend not responding"
+
+  # Development helpers
+  dev:
+    desc: Start database, backend, and frontend for development
+    deps: [db:up, backend:up, frontend:dev]
+
+  # Seed password for development
+  dev:set-password:
+    desc: Set development password for test account (use -- PW=yourpass for non-interactive)
+    cmds:
+      - powershell -ExecutionPolicy Bypass -File scripts/set-password.ps1 -Password "{{.PW}}"
+
+  # Linting
+  lint:backend:
+    desc: Lint backend code
+    cmds:
+      - cd {{.BACKEND_DIR}} && ruff check .
+
+  lint:frontend:
+    desc: Lint frontend code
+    cmds:
+      - cd {{.FRONTEND_DIR}} && npm run lint
+
+  format:backend:
+    desc: Format backend code
+    cmds:
+      - cd {{.BACKEND_DIR}} && ruff format .
+
+  format:frontend:
+    desc: Format frontend code
+    cmds:
+      - cd {{.FRONTEND_DIR}} && npm run format
+
+  # Testing
+  test:backend:
+    desc: Run backend tests
+    cmds:
+      - cd {{.BACKEND_DIR}} && pytest
+
+  test:frontend:
+    desc: Run frontend tests
+    cmds:
+      - cd {{.FRONTEND_DIR}} && npm run test

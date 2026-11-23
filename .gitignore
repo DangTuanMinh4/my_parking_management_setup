@@ -1,0 +1,21 @@
+# Environment and sensitive secret files
+.env
+.env.*
+.env*
+**/.env
+**/.env.*
+**/.env*
+
+# Strictly allow example templates
+!.env.example
+!.env.example.*
+!**/.env.example
+!**/.env.example.*
+
+# Common logs and artifacts
+*.log
+logs/
+.coverage
+test-results/
+agent.zip
+scripts.zip
