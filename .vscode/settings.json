@@ -1,0 +1,7 @@
+{
+  "search.useIgnoreFiles": true,
+  "search.exclude": {
+    "**/parking_management_backend": false,
+    "**/parking_management_frontend": false
+  }
+}
