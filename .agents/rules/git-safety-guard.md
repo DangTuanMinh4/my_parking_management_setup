@@ -18,6 +18,7 @@ AI Agent hoặc bất kỳ script tự động nào KHÔNG ĐƯỢC PHÉP chạy
 - `git reset --hard` (đặc biệt khi đang có uncommitted changes hoặc chưa tạo stash/backup)
 - `git checkout -- .` hoặc `git restore .` mà không có sự xác nhận rõ ràng của người dùng
 - `git clean -fdx` hoặc `git clean -fd` (xóa vĩnh viễn các file untracked, untracked configs, tài liệu mới)
+- `git worktree remove --force` hoặc `git worktree remove -f` (nghiêm cấm ép xóa worktree có chứa thay đổi chưa commit; chỉ dùng `git worktree remove` an toàn)
 
 ### 🚫 Nhóm C: Xóa Nhánh Từ Xa & Xóa Nhánh Cứng (Destructive Deletion)
 - `git push <remote> --delete <branch>` hoặc `git push <remote> :<branch>`

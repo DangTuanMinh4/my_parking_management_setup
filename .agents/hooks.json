@@ -74,5 +74,31 @@
         ]
       }
     ]
+  },
+  "subagent-telemetry": {
+    "PreToolUse": [
+      {
+        "matcher": "invoke_subagent|swarm|manage_subagents",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -ExecutionPolicy Bypass -Command \"$f = @('scripts/subagent-telemetry-hook.ps1', '.agents/scripts/subagent-telemetry-hook.ps1', 'E:/code/parking_management/.agents/scripts/subagent-telemetry-hook.ps1') | Where-Object { Test-Path $_ } | Select-Object -First 1; if ($f) { & $f } else { Write-Output '{\\\"decision\\\": \\\"allow\\\"}' }\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "invoke_subagent|swarm|manage_subagents",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -ExecutionPolicy Bypass -Command \"$f = @('scripts/subagent-telemetry-hook.ps1', '.agents/scripts/subagent-telemetry-hook.ps1', 'E:/code/parking_management/.agents/scripts/subagent-telemetry-hook.ps1') | Where-Object { Test-Path $_ } | Select-Object -First 1; if ($f) { & $f } else { Write-Output '{}' }\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
   }
 }

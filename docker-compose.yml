@@ -1,0 +1,66 @@
+services:
+  db:
+    image: postgres:18.6-alpine
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:5433:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-parking_db}
+      POSTGRES_USER: ${POSTGRES_USER:-parking_user}
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:?Error: POSTGRES_PASSWORD is required}"
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-parking_user} -d ${POSTGRES_DB:-parking_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  backend:
+    build:
+      context: ./parking_management_backend
+      dockerfile: Dockerfile
+      target: runtime
+    restart: unless-stopped
+    command: ["gunicorn", "-c", "docker/gunicorn.conf.py", "config.wsgi:application"]
+    ports:
+      - "127.0.0.1:8000:8000"
+    environment:
+      DJANGO_SETTINGS_MODULE: ${DJANGO_SETTINGS_MODULE:-config.settings.local}
+      SECRET_KEY: "${SECRET_KEY:?Error: SECRET_KEY is required}"
+      POSTGRES_DB: ${POSTGRES_DB:-parking_db}
+      POSTGRES_USER: ${POSTGRES_USER:-parking_user}
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:?Error: POSTGRES_PASSWORD is required}"
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+      DEBUG: ${DEBUG:-True}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:-localhost,127.0.0.1,backend}
+      PARKING_HOURLY_RATE_VND: ${PARKING_HOURLY_RATE_VND:-10000.00}
+      RUN_MIGRATIONS: ${RUN_MIGRATIONS:-1}
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:8000/api/health/"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  frontend:
+    build:
+      context: ./parking_management_frontend
+      dockerfile: Dockerfile
+      target: runtime
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:5173:5173"
+    environment:
+      VITE_API_BASE_URL: http://backend:8000
+    depends_on:
+      backend:
+        condition: service_healthy
+
+volumes:
+  postgres_data:

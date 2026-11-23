@@ -1,0 +1,23 @@
+# Hard guardrail to block AI agent file reading tools for sensitive credentials
+# Wildcard blocks for all .env variations across any depth
+.env
+.env.*
+.env*
+**/.env
+**/.env.*
+**/.env*
+*.env
+*.env.*
+
+# Explicit exclusions for known subprojects
+parking_management_frontend/.env*
+parking_management_frontend/**/.env*
+parking_management_backend/.env*
+parking_management_backend/**/.env*
+
+# Strictly preserve and allow example template files only
+!.env.example
+!.env.example.*
+!**/.env.example
+!**/.env.example.*
+!**/*.env.example

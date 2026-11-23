@@ -1,4 +1,4 @@
-param()
+﻿param()
 
 # Đọc context JSON truyền từ Antigravity qua stdin
 $rawInput = [Console]::In.ReadToEnd()
@@ -29,6 +29,7 @@ $dangerRegexList = @(
     'git\s+checkout\s+(--\s+)?\.',
     'git\s+restore\s+(\.\b|--staged\s+\.)',
     'git\s+branch\s+-D',
+    'git\s+worktree\s+remove\s+.*(-f\b|--force)',
     'git\s+reflog\s+expire',
     'git\s+prune',
     'git\s+gc\s+.*--prune'

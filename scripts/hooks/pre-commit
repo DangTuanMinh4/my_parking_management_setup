@@ -1,0 +1,52 @@
+#!/bin/sh
+# Git Pre-Commit Hook: Strict Environment Privacy Lock
+# Blocks any attempt to commit real .env or .env.* files into Git repository.
+
+is_sensitive_env() {
+    file="$1"
+    base=$(basename "$file")
+
+    # Allow safe templates and documentation
+    case "$base" in
+        *.example*|*sample*|*template*)
+            return 1
+            ;;
+    esac
+
+    # Block sensitive env files
+    case "$base" in
+        .env|.env.*|*.env|*.env.*)
+            return 0
+            ;;
+    esac
+
+    return 1
+}
+
+blocked_files=""
+
+# Check all files currently staged for commit
+staged_files=$(git diff --cached --name-only)
+
+for file in $staged_files; do
+    if is_sensitive_env "$file"; then
+        blocked_files="$blocked_files\n  -> $file"
+    fi
+done
+
+if [ -n "$blocked_files" ]; then
+    printf "\n" >&2
+    printf "========================================================================\n" >&2
+    printf " [CRITICAL SECURITY ALERT] STRICT ENV PRIVACY LOCK: COMMIT BLOCKED!\n" >&2
+    printf "========================================================================\n" >&2
+    printf " Ban dang co gang commit file cau hinh moi truong nhay cam vao Git:%b\n\n" "$blocked_files" >&2
+    printf " Quy tac bat buoc:\n" >&2
+    printf "   - KHONG BAO GIO commit file .env hoac .env.* chua thong tin that.\n" >&2
+    printf "   - Hay unstage file nay bang: git reset HEAD <file>\n" >&2
+    printf "   - Dam bao file da duoc ghi vao .gitignore\n" >&2
+    printf "   - Chi commit file mau (.env.example)\n" >&2
+    printf "========================================================================\n\n" >&2
+    exit 1
+fi
+
+exit 0

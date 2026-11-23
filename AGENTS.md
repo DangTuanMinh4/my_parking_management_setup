@@ -43,6 +43,7 @@ AI Agent hoặc bất kỳ script tự động nào KHÔNG ĐƯỢC PHÉP chạy
 - `git reset --hard` (đặc biệt khi đang có uncommitted changes hoặc chưa tạo stash/backup)
 - `git checkout -- .` hoặc `git restore .` mà không có sự xác nhận rõ ràng của người dùng
 - `git clean -fdx` hoặc `git clean -fd` (xóa vĩnh viễn các file untracked, untracked configs, tài liệu mới)
+- `git worktree remove --force` hoặc `git worktree remove -f` (nghiêm cấm ép xóa worktree có chứa thay đổi chưa commit; chỉ dùng `git worktree remove` an toàn)
 
 ### 🚫 Nhóm C: Xóa Nhánh Từ Xa & Xóa Nhánh Cứng (Destructive Deletion)
 - `git push <remote> --delete <branch>` hoặc `git push <remote> :<branch>`
@@ -90,7 +91,7 @@ Contains two independent sub-projects:
    - **STRICT BACKEND CODE LOCK**: Backend do team khác phụ trách. Tuyệt đối KHÔNG sửa đổi, thêm mới, xóa hay can thiệp bất kỳ file nào trong `parking_management_backend/`. Chỉ đọc tài liệu/specs (`docs/`, `db/`) để mapping API lên Frontend khi cần.
    - **STRICT ENV PRIVACY LOCK**: NEVER inspect, read, display, or tool-read real `.env` secret files (`.env`, `.env.local`, `.env.production`). Only `.env.example` templates are permitted.
    - **STRICT GIT SAFETY GUARD**: Absolute ban on destructive git commands (`git push --force`, `git reset --hard`, `git clean -fdx`, `git checkout .`, `git push --delete`, `git branch -D`, `git prune/gc`). Follow `.rulesync/rules/git-safety-guard.md`.
-   - **SUBAGENT ISOLATION GUARD**: BẮT BUỘC khi khởi chạy bất kỳ subagent nào có quyền ghi/sửa code (`EnableWriteTools: true` hoặc worker sửa code trong swarm), luôn luôn phải thiết lập `Workspace: "share"`. Tuyệt đối không để `Workspace: "inherit"` trừ các tác vụ nghiên cứu chỉ đọc (read-only research/inspection), nhằm tránh làm bẩn working directory và cho phép revert thủ công hàng loạt dễ dàng bằng cách hủy workspace/nhánh tạm.
+   - **SUBAGENT ISOLATION GUARD & MANDATORY VERIFICATION GATE**: BẮT BUỘC khi khởi chạy bất kỳ subagent nào có quyền ghi/sửa code (`EnableWriteTools: true` hoặc worker sửa code trong swarm), luôn luôn phải thiết lập `Workspace: "branch"` hoặc `Workspace: "share"`. Tuyệt đối NGHIÊM CẤM dùng `Workspace: "inherit"` khi sửa code. **BẮT BUỘC CHỨNG MINH BẰNG LỆNH (CẤM NÓI SUÔNG)**: Ngay sau khi khởi chạy subagent ở mode `branch`/`share`, Agent BẮT BUỘC phải chạy ngay lệnh `git worktree list` và xuất trực tiếp output thực tế ra cho người dùng thấy rõ: (1) Role & Nhiệm vụ, (2) Chế độ `Workspace: "branch"` (hoặc `"share"`), (3) Bằng chứng từ output lệnh `git worktree list` kèm đường dẫn worktree thực tế trên ổ cứng để người dùng tự kiểm tra và revert thủ công bất cứ lúc nào.
 
 3. **Context & Token Optimization**:
    - **Targeted Reads Only**: Avoid recursive scans (`Get-ChildItem -Recurse`, `tree`) or mass reads (> 250 lines). Use targeted line ranges or `Select-String`.

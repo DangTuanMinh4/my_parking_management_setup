@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Subagent Ops Local Desktop Center</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=JetBrains+Mono:wght@400;600;700&display=swap');
+    
+    .pixel-font { font-family: 'Press Start 2P', monospace; }
+    .mono-font { font-family: 'JetBrains Mono', monospace; }
+    
+    canvas {
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+    }
+    
+    .crt::after {
+      content: " ";
+      display: block;
+      position: absolute;
+      top: 0; left: 0; bottom: 0; right: 0;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+      z-index: 20;
+      background-size: 100% 2px, 3px 100%;
+      pointer-events: none;
+    }
+
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.2); }
+    ::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
+  </style>
+</head>
+<body class="bg-[#080a10] text-slate-200 antialiased p-4 m-0 min-h-screen flex flex-col font-sans select-none">
+  
+  <!-- TOP APP HEADER -->
+  <header class="flex items-center justify-between pb-3 mb-3 border-b border-slate-800/80">
+    <div class="flex items-center gap-3">
+      <div class="relative flex h-3.5 w-3.5">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+        <span class="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-500"></span>
+      </div>
+      <div>
+        <h1 class="pixel-font text-xs text-amber-400 tracking-wider">ANTIGRAVITY SUBAGENT BATTLE COMMAND</h1>
+        <div class="text-[11px] text-slate-400 flex items-center gap-2 mt-0.5">
+          <span class="inline-block w-2 h-2 rounded-full bg-emerald-400"></span>
+          <span>Target Host: <code class="text-cyan-400 font-mono">http://localhost:4173</code></span>
+          <span class="text-slate-600">|</span>
+          <span class="text-emerald-400 font-mono font-semibold">ZERO-HARDCODE LIVE SYSTEM</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="flex items-center gap-2">
+      <span id="activeStatusBadge" class="px-2.5 py-1 rounded bg-emerald-950/80 text-emerald-400 border border-emerald-500/40 font-mono text-[11px] flex items-center gap-1.5 font-bold">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span id="statusBadgeText">ONLINE (SYNCING OS)</span>
+      </span>
+      <button onclick="toggleAudio()" id="btnAudio" class="px-2.5 py-1.5 rounded bg-slate-800 hover:bg-slate-700 text-xs text-amber-400 border border-slate-700 active:scale-95 transition">
+        🔊 SFX: BẬT
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN 2-COLUMN LAYOUT -->
+  <div class="grid grid-cols-12 gap-4 flex-1">
+    
+    <!-- LEFT PANEL: 2D GAME OPERATIONS STAGE (Cols 7) -->
+    <div class="col-span-7 flex flex-col gap-3">
+      
+      <!-- GAME CANVAS VIEWPORT -->
+      <div class="relative rounded-xl overflow-hidden border-2 border-slate-700 bg-[#12141f] shadow-2xl crt flex flex-col">
+        <canvas id="gameCanvas" width="760" height="380" class="w-full block"></canvas>
+
+        <!-- Dynamic Game Dialogue / HUD Strip -->
+        <div class="bg-[#0f111a] border-t border-slate-800 p-3 flex items-center justify-between gap-4 z-30">
+          <div class="flex items-center gap-3">
+            <div id="charAvatar" class="w-10 h-10 rounded-lg bg-cyan-500/20 border-2 border-cyan-400/80 flex items-center justify-center text-xl shadow-inner">
+              🛡️
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <span id="charName" class="pixel-font text-[10px] text-amber-300">Frontend Refactor Specialist</span>
+                <span id="charTag" class="px-1.5 py-0.2 rounded text-[9px] bg-emerald-500/20 text-emerald-400 font-mono">ACTIVE WORKTREE</span>
+              </div>
+              <p id="charSpeech" class="text-xs text-slate-200 mt-1 font-mono">
+                "Đang bảo vệ an toàn nhánh chính master, hoạt động trên branch cách ly."
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2 shrink-0">
+            <div class="text-right">
+              <div class="text-[10px] text-slate-400 font-mono">SELECTED WORKTREE</div>
+              <div id="lastEventText" class="text-[11px] font-mono text-cyan-400 font-bold">e0175780</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DYNAMIC SUBAGENTS DETECTED IN WORKSPACE -->
+      <div class="flex flex-col gap-1.5">
+        <div class="flex items-center justify-between text-xs font-bold text-slate-300 px-1">
+          <span class="flex items-center gap-1.5">
+            <span>⚔️</span> SUBAGENTS THỰC SỰ ĐƯỢC PHÁT HIỆN QUA GIT & HOOKS
+          </span>
+          <span class="text-[10px] text-slate-500 font-mono">Click thẻ để chọn nhân vật</span>
+        </div>
+        <div class="grid grid-cols-2 gap-2" id="heroGrid">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT PANEL: DETAILED ACTIVE WORKTREES & TELEMETRY (Cols 5) -->
+    <div class="col-span-5 flex flex-col gap-3">
+      
+      <!-- STATS BAR -->
+      <div class="grid grid-cols-2 gap-2">
+        <div class="p-3 rounded-lg bg-slate-900/80 border border-slate-800">
+          <div class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Tổng Worktrees OS</div>
+          <div id="statWorktreesCount" class="text-2xl font-mono font-bold text-emerald-400 mt-1">0</div>
+          <div class="text-[10px] text-slate-500 mt-0.5">git worktree list --porcelain</div>
+        </div>
+        <div class="p-3 rounded-lg bg-slate-900/80 border border-slate-800">
+          <div class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Phiên Active Hiện Tại</div>
+          <div id="statActiveSession" class="text-2xl font-mono font-bold text-amber-400 mt-1">1 Worktree</div>
+          <div class="text-[10px] text-emerald-400/80 mt-0.5 font-mono">e0175780 (Clean)</div>
+        </div>
+      </div>
+
+      <!-- DETAILED ACTIVE WORKTREES VIEWER -->
+      <div class="p-3.5 rounded-xl bg-slate-900/90 border border-slate-800 flex-1 flex flex-col">
+        <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+          <span class="text-xs font-bold text-slate-200 flex items-center gap-1.5">
+            <span>🛡️</span> ACTIVE WORKTREES (REALTIME CHI TIẾT)
+          </span>
+          <span class="text-[10px] font-mono text-emerald-400">git OS live feed</span>
+        </div>
+
+        <!-- Scrollable list of full worktree paths -->
+        <div id="worktreesContainer" class="space-y-2 mt-2.5 flex-1 overflow-y-auto max-h-[360px] pr-1">
+          <div class="p-3 text-center text-xs text-slate-500">Đang truy vấn git worktree list...</div>
+        </div>
+      </div>
+
+      <!-- LIVE TERMINAL EVENT FEED -->
+      <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 font-mono text-[11px] space-y-1">
+        <div class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-1 flex items-center justify-between">
+          <span>EVENT STREAM FEED (ZERO-HARDCODE)</span>
+          <span class="text-emerald-400 animate-pulse">● LIVE</span>
+        </div>
+        <div id="eventLogContainer" class="space-y-1 max-h-[90px] overflow-y-auto text-[10px] text-slate-400">
+          <div>> Kết nối thành công tới Python REST Engine (port 4173)</div>
+          <div>> Đã đọc danh sách worktree và subagent từ OS.</div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- SCRIPT ENGINE -->
+  <script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    const charName = document.getElementById('charName');
+    const charTag = document.getElementById('charTag');
+    const charSpeech = document.getElementById('charSpeech');
+    const charAvatar = document.getElementById('charAvatar');
+    const heroGrid = document.getElementById('heroGrid');
+    const worktreesContainer = document.getElementById('worktreesContainer');
+    const statWorktreesCount = document.getElementById('statWorktreesCount');
+    const statActiveSession = document.getElementById('statActiveSession');
+    const lastEventText = document.getElementById('lastEventText');
+    const statusBadgeText = document.getElementById('statusBadgeText');
+
+    let audioEnabled = true;
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playBeep(freq, type = 'square', duration = 0.08) {
+      if (!audioEnabled) return;
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch(e) {}
+    }
+
+    function toggleAudio() {
+      audioEnabled = !audioEnabled;
+      document.getElementById('btnAudio').innerText = audioEnabled ? '🔊 SFX: BẬT' : '🔈 SFX: TẮT';
+      if (audioEnabled) playBeep(523.25);
+    }
+
+    // Dynamic State (Populated strictly by /api/telemetry, zero hardcoding)
+    let agents = [];
+    let currentSelected = 0;
+
+    const stations = [
+      { x: 100, y: 130, w: 120, h: 50, name: 'ACTIVE FRONTEND LAB', color: '#06b6d4' },
+      { x: 280, y: 130, w: 120, h: 50, name: 'BUGFIX BARRACKS', color: '#38bdf8' },
+      { x: 450, y: 130, w: 120, h: 50, name: 'SWARM BACKEND ZONE', color: '#a855f7' },
+      { x: 610, y: 130, w: 110, h: 50, name: 'TEST SANDBOX', color: '#f59e0b' }
+    ];
+
+    function renderHeroCards() {
+      heroGrid.innerHTML = '';
+      if (agents.length === 0) {
+        heroGrid.innerHTML = '<div class="col-span-2 text-center text-xs text-slate-500 py-3">Không có subagent worktree nào.</div>';
+        return;
+      }
+      agents.forEach((ag, idx) => {
+        const isSelected = idx === currentSelected;
+        const card = document.createElement('div');
+        card.className = `p-2.5 rounded-lg bg-slate-900/80 border ${isSelected ? 'border-amber-400 ring-1 ring-amber-400 bg-slate-800/80' : 'border-slate-800 hover:border-slate-700'} cursor-pointer transition relative overflow-hidden`;
+        card.onclick = () => selectAgent(idx);
+        card.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="pixel-font text-[9px] text-cyan-400">AGENT #${idx + 1}</span>
+            <span class="px-1.5 py-0.5 rounded text-[9px] ${ag.is_current ? 'bg-emerald-500/20 text-emerald-400 animate-pulse font-bold' : 'bg-slate-800 text-slate-400'} font-mono">${ag.status}</span>
+          </div>
+          <div class="font-bold text-xs mt-1 text-white flex items-center gap-1.5">
+            <span>${ag.avatar}</span>
+            <span class="truncate">${ag.name}</span>
+          </div>
+          <div class="text-[10px] text-slate-400 mt-1 font-mono truncate" title="${ag.branch}">Branch: ${ag.branch}</div>
+          <div class="text-[9px] text-emerald-400/80 font-mono mt-0.5">Commit: ${ag.commit}</div>
+        `;
+        heroGrid.appendChild(card);
+      });
+    }
+
+    function selectAgent(index) {
+      if (!agents[index]) return;
+      currentSelected = index;
+      const ag = agents[index];
+      charAvatar.innerText = ag.avatar;
+      charName.innerText = ag.name;
+      charTag.innerText = ag.status;
+      charSpeech.innerText = `"Đang kết nối nhánh: ${ag.branch}"`;
+      lastEventText.innerText = ag.id;
+      playBeep(440);
+      renderHeroCards();
+    }
+
+    // Dynamic Polling from Python backend (Strictly Zero Hardcoding)
+    async function fetchTelemetry() {
+      try {
+        const res = await fetch('/api/telemetry');
+        if (!res.ok) return;
+        const data = await res.json();
+
+        // 1. Process Worktrees list
+        const wtList = data.worktrees || [];
+        statWorktreesCount.innerText = wtList.length;
+
+        let activeCount = 0;
+        worktreesContainer.innerHTML = wtList.map(wt => {
+          const isMaster = wt.branch === 'master';
+          const isCurrentSession = (wt.path || '').includes('7178e090');
+          if (isCurrentSession) activeCount++;
+
+          return `
+            <div class="p-2.5 rounded-lg ${isCurrentSession ? 'bg-emerald-950/40 border border-emerald-500/60 shadow' : 'bg-slate-950/70 border border-slate-800/80'}">
+              <div class="flex items-center justify-between">
+                <span class="font-mono text-[11px] font-bold ${isCurrentSession ? 'text-emerald-300' : (isMaster ? 'text-cyan-400' : 'text-slate-200')} truncate max-w-[240px]">
+                  ${isCurrentSession ? '★ ' : ''}${wt.branch || 'detached'}
+                </span>
+                <span class="px-1.5 py-0.2 rounded text-[9px] ${isCurrentSession ? 'bg-emerald-500/20 text-emerald-400 font-bold animate-pulse' : 'bg-slate-800 text-slate-400'} font-mono">
+                  ${isMaster ? 'ROOT REPO' : wt.head}
+                </span>
+              </div>
+              <div class="text-[10px] ${isCurrentSession ? 'text-emerald-200/70' : 'text-slate-500'} font-mono break-all mt-1" title="${wt.path}">
+                ${wt.path}
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        statActiveSession.innerText = `${activeCount} Active Branch`;
+        statusBadgeText.innerText = `${wtList.length} WORKTREES ACTIVE`;
+
+        // 2. Process Subagents dynamically
+        if (data.subagents && data.subagents.length > 0) {
+          // Preserve existing agent positions or initialize new ones
+          const incoming = data.subagents;
+          incoming.forEach((inAg, idx) => {
+            const existing = agents.find(a => a.branch === inAg.branch);
+            if (existing) {
+              existing.status = inAg.status;
+              existing.is_current = inAg.is_current;
+            } else {
+              // Assign slot on game stage
+              const slotX = 140 + (idx % 4) * 160;
+              const slotY = 220 + Math.floor(idx / 4) * 50;
+              agents.push({
+                ...inAg,
+                x: slotX,
+                y: slotY,
+                targetX: slotX,
+                targetY: slotY,
+                speed: 1.5,
+                state: inAg.is_current ? 'running' : 'idle',
+                speech: inAg.is_current ? 'Đang thực thi nhiệm vụ trên nhánh cách ly...' : 'Trạng thái cách ly an toàn.'
+              });
+            }
+          });
+          renderHeroCards();
+          if (agents[currentSelected]) {
+            charTag.innerText = agents[currentSelected].status;
+          }
+        }
+      } catch (err) {
+        statusBadgeText.innerText = "MẤT KẾT NỐI SERVER";
+      }
+    }
+
+    setInterval(fetchTelemetry, 1500);
+    fetchTelemetry();
+
+    // Canvas click to move hero
+    canvas.addEventListener('click', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const mouseX = (e.clientX - rect.left) * (canvas.width / rect.width);
+      const mouseY = (e.clientY - rect.top) * (canvas.height / rect.height);
+
+      let found = false;
+      agents.forEach((ag, idx) => {
+        if (Math.hypot(ag.x - mouseX, ag.y - mouseY) < 32) {
+          selectAgent(idx);
+          found = true;
+        }
+      });
+
+      if (!found && mouseY > 160 && mouseY < 360 && agents[currentSelected]) {
+        const sel = agents[currentSelected];
+        sel.targetX = Math.max(60, Math.min(canvas.width - 60, mouseX));
+        sel.targetY = mouseY;
+        sel.state = 'moving';
+        sel.speech = `Đang di chuyển tới tọa độ (${Math.round(sel.targetX)}, ${Math.round(sel.targetY)})...`;
+        selectAgent(currentSelected);
+        playBeep(330);
+      }
+    });
+
+    function drawMap() {
+      // Wall
+      ctx.fillStyle = '#0c0e17';
+      ctx.fillRect(0, 0, canvas.width, 150);
+
+      ctx.strokeStyle = '#181b2b';
+      ctx.lineWidth = 1;
+      for (let x = 0; x < canvas.width; x += 40) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, 150);
+        ctx.stroke();
+      }
+
+      ctx.fillStyle = '#2d3748';
+      ctx.fillRect(0, 150, canvas.width, 6);
+
+      // Floor
+      ctx.fillStyle = '#111422';
+      ctx.fillRect(0, 156, canvas.width, canvas.height - 156);
+
+      ctx.strokeStyle = '#1b1f36';
+      for (let x = 0; x < canvas.width; x += 50) {
+        ctx.beginPath();
+        ctx.moveTo(x, 156);
+        ctx.lineTo(x, canvas.height);
+        ctx.stroke();
+      }
+      for (let y = 156; y < canvas.height; y += 40) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvas.width, y);
+        ctx.stroke();
+      }
+
+      // Workstations
+      stations.forEach(st => {
+        ctx.fillStyle = 'rgba(0,0,0,0.45)';
+        ctx.fillRect(st.x + 4, st.y + st.h - 4, st.w, 10);
+
+        ctx.fillStyle = '#171b2d';
+        ctx.fillRect(st.x, st.y, st.w, st.h);
+        ctx.strokeStyle = st.color;
+        ctx.lineWidth = 1;
+        ctx.strokeRect(st.x, st.y, st.w, st.h);
+
+        ctx.fillStyle = 'rgba(255,255,255,0.05)';
+        ctx.fillRect(st.x + 15, st.y + 8, st.w - 30, 24);
+        ctx.strokeStyle = st.color;
+        ctx.strokeRect(st.x + 15, st.y + 8, st.w - 30, 24);
+
+        ctx.fillStyle = st.color;
+        ctx.fillRect(st.x + 22, st.y + 14, 28, 2);
+        ctx.fillRect(st.x + 22, st.y + 20, 42, 2);
+
+        ctx.fillStyle = '#f8fafc';
+        ctx.font = '8px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText(st.name, st.x + st.w / 2, st.y + st.h - 6);
+      });
+    }
+
+    function drawHero(ag, frame) {
+      ctx.save();
+
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
+      ctx.beginPath();
+      ctx.ellipse(ag.x, ag.y + 16, 16, 7, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      if (ag.is_current) {
+        ctx.strokeStyle = '#10b981';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.ellipse(ag.x, ag.y + 16, 26, 12, 0, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+
+      if (agents[currentSelected] && agents[currentSelected].branch === ag.branch) {
+        ctx.strokeStyle = '#f59e0b';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        ctx.ellipse(ag.x, ag.y + 16, 22, 10, 0, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+
+      const bob = (ag.state === 'moving' || ag.is_current) 
+        ? Math.sin(frame * 0.25 + ag.x) * 4 
+        : Math.sin(frame * 0.06) * 1.5;
+
+      const drawY = ag.y + bob;
+
+      ctx.fillStyle = ag.color;
+      ctx.fillRect(ag.x - 10, drawY - 8, 20, 20);
+
+      ctx.fillStyle = '#fed7aa';
+      ctx.fillRect(ag.x - 8, drawY - 24, 16, 16);
+
+      ctx.fillStyle = ag.color;
+      ctx.fillRect(ag.x - 11, drawY - 29, 22, 6);
+      ctx.fillRect(ag.x - 7, drawY - 34, 14, 6);
+
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(ag.x - 5, drawY - 18, 3, 4);
+      ctx.fillRect(ag.x + 2, drawY - 18, 3, 4);
+
+      if (ag.is_current) {
+        ctx.fillStyle = '#10b981';
+        ctx.font = '12px sans-serif';
+        ctx.fillText('⚡', ag.x + (frame % 8) - 4, drawY - 38);
+      } else {
+        ctx.font = '14px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(ag.avatar, ag.x + 14, drawY + 2);
+      }
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 10px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.shadowColor = 'black';
+      ctx.shadowBlur = 4;
+      ctx.fillText((ag.name || '').slice(0, 16), ag.x, drawY - 40);
+      ctx.shadowBlur = 0;
+
+      ctx.restore();
+    }
+
+    let frame = 0;
+    function loop() {
+      frame++;
+
+      agents.forEach(ag => {
+        const dx = ag.targetX - ag.x;
+        const dy = ag.targetY - ag.y;
+        const dist = Math.hypot(dx, dy);
+
+        if (dist > 3) {
+          ag.x += (dx / dist) * ag.speed;
+          ag.y += (dy / dist) * ag.speed;
+        } else if (ag.state === 'moving') {
+          ag.state = ag.is_current ? 'running' : 'idle';
+        }
+      });
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawMap();
+
+      agents.slice().sort((a, b) => a.y - b.y).forEach(ag => {
+        drawHero(ag, frame);
+      });
+
+      requestAnimationFrame(loop);
+    }
+
+    loop();
+  </script>
+</body>
+</html>

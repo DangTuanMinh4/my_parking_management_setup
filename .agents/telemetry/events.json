@@ -1,0 +1,54 @@
+﻿{
+    "timestamp":  "2026-11-23T15:32:18+07:00",
+    "eventName":  "Sync",
+    "conversationId":  "",
+    "toolName":  "",
+    "toolArgs":  null,
+    "worktrees":  [
+                      {
+                          "path":  "E:/code/parking_management",
+                          "head":  "a228035be94c064e44afce2be041dddfb8daf35f",
+                          "branch":  "refs/heads/master"
+                      },
+                      {
+                          "path":  "C:/Users/DELL/.gemini/antigravity/worktrees/23d0ba80-4d14-4934-8416-ff45cfff14d9/subagent-Customer-API---UI-Specialist-cross-stack-contract-verifier-52d3b70d",
+                          "head":  "a228035be94c064e44afce2be041dddfb8daf35f",
+                          "branch":  "refs/heads/subagent-Customer-API---UI-Specialist-cross-stack-contract-verifier-52d3b70d"
+                      },
+                      {
+                          "path":  "C:/Users/DELL/.gemini/antigravity/worktrees/23d0ba80-4d14-4934-8416-ff45cfff14d9/subagent-Frontend-Bugfix-Specialist-frontend-refactor-specialist-1cdc47de",
+                          "head":  "a228035be94c064e44afce2be041dddfb8daf35f",
+                          "branch":  "refs/heads/subagent-Frontend-Bugfix-Specialist-frontend-refactor-specialist-1cdc47de"
+                      },
+                      {
+                          "path":  "C:/Users/DELL/.gemini/antigravity/worktrees/23d0ba80-4d14-4934-8416-ff45cfff14d9/subagent-Parking-Map---Slot-API-Specialist-cross-stack-contract-verifier-12cd8078",
+                          "head":  "a228035be94c064e44afce2be041dddfb8daf35f",
+                          "branch":  "refs/heads/subagent-Parking-Map---Slot-API-Specialist-cross-stack-contract-verifier-12cd8078"
+                      },
+                      {
+                          "path":  "C:/Users/DELL/.gemini/antigravity/worktrees/23d0ba80-4d14-4934-8416-ff45cfff14d9/swarm-backend-fixer-62bccf12",
+                          "head":  "a228035be94c064e44afce2be041dddfb8daf35f",
+                          "branch":  "refs/heads/swarm-backend-fixer-62bccf12"
+                      },
+                      {
+                          "path":  "C:/Users/DELL/.gemini/antigravity/worktrees/7178e090-3921-439d-9932-dc491467afcf/subagent-Cross-Stack-Contract-Verifier-cross-stack-contract-verifier-be02f4eb",
+                          "head":  "a228035be94c064e44afce2be041dddfb8daf35f",
+                          "branch":  "refs/heads/subagent-Cross-Stack-Contract-Verifier-cross-stack-contract-verifier-be02f4eb"
+                      },
+                      {
+                          "path":  "C:/Users/DELL/.gemini/antigravity/worktrees/7178e090-3921-439d-9932-dc491467afcf/subagent-Frontend-Refactor-Specialist-frontend-refactor-specialist-e0175780",
+                          "head":  "a228035be94c064e44afce2be041dddfb8daf35f",
+                          "branch":  "refs/heads/subagent-Frontend-Refactor-Specialist-frontend-refactor-specialist-e0175780"
+                      },
+                      {
+                          "path":  "C:/Users/DELL/.gemini/antigravity/worktrees/bb712189-a4ff-4912-a3ca-f51d506433f0/subagent-Branch-Workspace-Tester-self-0f8b5938",
+                          "head":  "a228035be94c064e44afce2be041dddfb8daf35f",
+                          "branch":  "refs/heads/subagent-Branch-Workspace-Tester-self-0f8b5938"
+                      },
+                      {
+                          "path":  "C:/Users/DELL/.gemini/antigravity/worktrees/bb712189-a4ff-4912-a3ca-f51d506433f0/subagent-Manual-Revert-Demo-self-2abbbced",
+                          "head":  "a228035be94c064e44afce2be041dddfb8daf35f",
+                          "branch":  "refs/heads/subagent-Manual-Revert-Demo-self-2abbbced"
+                      }
+                  ]
+}

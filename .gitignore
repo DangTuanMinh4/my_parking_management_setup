@@ -19,3 +19,17 @@ logs/
 test-results/
 agent.zip
 scripts.zip
+*.lcov
+
+# AI agents, tool cache and temporary scripts
+.antigravity/
+.codex/
+graphify-out/
+demoantipass.html
+p0_entry_exit_prototype.html
+fix_*.py
+
+# Nested independent Git repositories
+parking_management_backend/
+parking_management_frontend/
+

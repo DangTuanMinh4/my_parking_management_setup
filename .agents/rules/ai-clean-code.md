@@ -25,3 +25,15 @@ Quy tắc bắt buộc áp dụng khi viết, sửa đổi và review code trong
 - **Bắt buộc dùng `edit_file` / `write_file`**: Mọi sửa đổi mã nguồn phải qua công cụ native để người dùng theo dõi Visual Diff trên IDE. Không tự ý dùng script (`python`, PowerShell) ghi đè file code nguồn trừ khi được người dùng yêu cầu rõ ràng.
 - **Bảo toàn tuyệt đối UTF-8**: Mọi file chứa tiếng Việt có dấu phải giữ nguyên UTF-8, nghiêm cấm các thao tác gây lỗi font (mojibake).
 - **Static Verification**: Sau khi sửa, chạy lint/build/test để kiểm tra cú pháp, imports và dependencies hợp lệ trước khi hoàn tất.
+
+## 5. Subagent Isolation Guard & Mandatory Verification Gate
+- **Cấm tuyệt đối `Workspace: "inherit"` khi sửa code**: Mọi subagent hoặc worker có quyền ghi/sửa code (`EnableWriteTools: true`) BẮT BUỘC phải chạy trên `Workspace: "branch"` hoặc `Workspace: "share"`. Chế độ `inherit` chỉ được phép dùng cho tác vụ đọc/nghiên cứu thuần túy (read-only).
+- **Bắt buộc chứng minh bằng lệnh thực tế (Proof via Command - Cấm chỉ nói suông)**: 
+  - Ngay sau khi khởi chạy subagent ở mode `branch` hoặc `share`, Agent **BẮT BUỘC** phải tự động chạy lệnh terminal `git worktree list`.
+  - Phải trích xuất và hiển thị output thực tế của lệnh đó trong câu trả lời cho người dùng để chứng minh sự tồn tại của nhánh cách ly.
+  - Phải in rõ ràng:
+    1. Role và nhiệm vụ của subagent.
+    2. Mode: `Workspace: "branch"` (hoặc `"share"`).
+    3. Output nguyên bản từ lệnh `git worktree list` kèm đường dẫn worktree thực tế trên ổ đĩa để người dùng giám sát và có thể tự revert thủ công bất cứ lúc nào.
+
+
